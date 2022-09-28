@@ -5,7 +5,7 @@ import { LinkContainer } from 'react-router-bootstrap';
 function NavScrollExample() {
   return (
     <Navbar bg="dark" variant="dark" expand="lg" collapseOnSelect>
-      <Container fluid>
+      <Container>
         <LinkContainer to="/">
           <Navbar.Brand>ProShop</Navbar.Brand>
         </LinkContainer>
