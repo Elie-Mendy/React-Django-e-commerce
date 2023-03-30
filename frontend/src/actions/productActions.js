@@ -8,6 +8,7 @@ import {
     PRODUCT_DETAIL_FAIL,
 } from '../constants/productConstants';
 
+// redux-thunk allows us to return async function instead of regular actions 
 export const listProducts = () => async (dispatch) => {
     try {
         dispatch({type : PRODUCT_LIST_REQUEST});

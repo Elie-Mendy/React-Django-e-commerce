@@ -16,7 +16,7 @@ function NavScrollExample() {
             style={{ maxHeight: '100px' }}
             navbarScroll
           >
-            <LinkContainer to="/home">
+            <LinkContainer to="/cart">
               <Nav.Link><i className="fas fa-shopping-cart" /> Cart</Nav.Link>
             </LinkContainer>
             <LinkContainer to="/login">
