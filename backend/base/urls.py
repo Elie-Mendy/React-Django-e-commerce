@@ -3,10 +3,9 @@ from . import views
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-urlpatterns = [
-    path('', views.getRoutes, name="routes"), 
-    
+urlpatterns = [    
     path('users/', views.getUsers, name='users'),
+    path('users/register', views.registerUser, name='register'),
     path('users/login/', views.MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('users/profile', views.getUserProfile, name="users-profile"), 
     
