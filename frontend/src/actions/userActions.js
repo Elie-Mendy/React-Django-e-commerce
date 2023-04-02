@@ -9,6 +9,10 @@ import {
     USER_REGISTER_REQUEST,
     USER_REGISTER_SUCCESS,
     USER_REGISTER_FAIL,
+
+    USER_DETAILS_REQUEST,
+    USER_DETAILS_SUCCESS,
+    USER_DETAILS_FAIL,
 } from '../constants/userConstants'
 
 
@@ -89,6 +93,52 @@ export const register = (name, email, password) => async (dispatch) => {
     } catch (error) {
         dispatch({
             type: USER_REGISTER_FAIL,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
+}
+
+
+
+export const getUserDetails = (id) => async (dispatch, getState) => {
+    try {
+        // dispatch the LOGIN RESUEST action 
+        dispatch({type : USER_DETAILS_REQUEST});
+        
+        // get the user from our redux store
+        const { userLogin: { userInfo } } = getState()
+
+        // Set and Launch a request
+        // the vue is protected (IsAdmin) so we need to fetch the token
+        const config = {
+            headers: {
+                'Content-type': 'application/json',
+                'Authorisation': `Bearer ${userInfo.token}` //
+            }
+        }
+
+        // setting and launch the request 
+        const { data } = await axios
+        .create({
+          headers: {
+            Authorization: `Bearer ${userInfo.token}`,
+            'Content-Type': 'application/json',
+          },
+        })
+        .get(`/api/users/${id}/`)
+        
+        // If the request succeed,
+        // Dispatch the REGISTER SUCCESS action 
+        dispatch({
+            type: USER_DETAILS_SUCCESS,
+            payload: data
+        })
+
+    } catch (error) {
+        dispatch({
+            type: USER_DETAILS_FAIL,
             payload: error.response && error.response.data.detail
                 ? error.response.data.detail
                 : error.message,

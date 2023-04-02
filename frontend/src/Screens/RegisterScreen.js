@@ -47,7 +47,7 @@ function RegisterScreen() {
             {error && <Message variant='danger'>{error}</Message>}
             {loading && <Loader />}
             <Form onSubmit={submitHandler}>
-            <Form.Group controlId='name' className='py-3'>
+                <Form.Group controlId='name' className='py-3'>
 
                 <Form.Label>Name</Form.Label>
                     <Form.Control
