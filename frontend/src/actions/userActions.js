@@ -13,6 +13,11 @@ import {
     USER_DETAILS_REQUEST,
     USER_DETAILS_SUCCESS,
     USER_DETAILS_FAIL,
+    USER_DETAILS_RESET,
+
+    USER_UPDATE_PROFILE_REQUEST,
+    USER_UPDATE_PROFILE_SUCCESS,
+    USER_UPDATE_PROFILE_FAIL,
 } from '../constants/userConstants'
 
 
@@ -60,6 +65,7 @@ export const login = (email, password) => async (dispatch) => {
 export const logout = () => (dispatch) => {
     // Remove data from the localStorage
     localStorage.removeItem('userInfo')
+    dispatch({ type: USER_DETAILS_RESET })
     dispatch({ type: USER_LOGOUT })
 }
 
@@ -101,7 +107,6 @@ export const register = (name, email, password) => async (dispatch) => {
 }
 
 
-
 export const getUserDetails = (id) => async (dispatch, getState) => {
     try {
         // dispatch the LOGIN RESUEST action 
@@ -109,15 +114,6 @@ export const getUserDetails = (id) => async (dispatch, getState) => {
         
         // get the user from our redux store
         const { userLogin: { userInfo } } = getState()
-
-        // Set and Launch a request
-        // the vue is protected (IsAdmin) so we need to fetch the token
-        const config = {
-            headers: {
-                'Content-type': 'application/json',
-                'Authorisation': `Bearer ${userInfo.token}` //
-            }
-        }
 
         // setting and launch the request 
         const { data } = await axios
@@ -128,7 +124,7 @@ export const getUserDetails = (id) => async (dispatch, getState) => {
           },
         })
         .get(`/api/users/${id}/`)
-        
+
         // If the request succeed,
         // Dispatch the REGISTER SUCCESS action 
         dispatch({
@@ -139,6 +135,52 @@ export const getUserDetails = (id) => async (dispatch, getState) => {
     } catch (error) {
         dispatch({
             type: USER_DETAILS_FAIL,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
+}
+
+
+export const updateUserProfile = (user) => async (dispatch, getState) => {
+    try {
+        // dispatch the LOGIN RESUEST action 
+        dispatch({type : USER_UPDATE_PROFILE_REQUEST});
+        
+        // get the user from our redux store
+        const { userLogin: { userInfo } } = getState()
+
+        // setting and launch the request 
+        const { data } = await axios
+        .create({
+          headers: {
+            Authorization: `Bearer ${userInfo.token}`,
+            'Content-Type': 'application/json',
+          },
+        })
+        .put(`/api/users/profile/update/`, user)
+
+        // If the request succeed,
+        // Dispatch the REGISTER SUCCESS action 
+        dispatch({
+            type: USER_UPDATE_PROFILE_SUCCESS,
+            payload: data
+        })
+
+        // If the previous request succeed,
+        // Dispatch the LOGIN SUCCESS action 
+        dispatch({
+            type: USER_LOGIN_SUCCESS,
+            payload: data
+        })
+        // Store data from the localStorage
+        localStorage.setItem('userInfo', JSON.stringify(data))
+
+
+    } catch (error) {
+        dispatch({
+            type: USER_UPDATE_PROFILE_FAIL,
             payload: error.response && error.response.data.detail
                 ? error.response.data.detail
                 : error.message,

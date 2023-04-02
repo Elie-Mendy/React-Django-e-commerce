@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Form, Row, Col, Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../Components/Loader";
 import Message from "../Components/Message";
-import { getUserDetails } from "../actions/userActions";
+import { getUserDetails, updateUserProfile } from "../actions/userActions";
+import { USER_UPDATE_PROFILE_RESET } from '../constants/userConstants'
 
 function ProfileScreen() {
     const [name, setName] = useState("");
@@ -20,7 +21,24 @@ function ProfileScreen() {
     const { error, loading, user } = userDetails;
 
     const userLogin = useSelector((state) => state.userLogin);
-    const { userInfo} = userLogin;
+    const { userInfo } = userLogin;
+
+    const userUpdateProfile = useSelector((state) => state.userUpdateProfile);
+    const { success } = userUpdateProfile;
+
+    useEffect(() => {
+        if (!userInfo) {
+            navigate('/login');
+        } else {
+            if(!user || !user.name || success){
+                dispatch(getUserDetails('profile'))
+                dispatch({ type: USER_UPDATE_PROFILE_RESET })
+            } else {
+                setName(user.name)
+                setEmail(user.email)
+            }
+        }
+    }, [dispatch, navigate, userInfo, user, success]);
 
     const submitHandler = (e) => {
         e.preventDefault();
@@ -28,22 +46,14 @@ function ProfileScreen() {
             setMessage("Password do not match");
         } else {
             setMessage("");
-            console.log('Updating ')
+            dispatch(updateUserProfile({
+                'id': user._id,
+                'name': name,
+                'email': email,
+                'password': password,
+            }))
         }
     };
-
-    useEffect(() => {
-        if (!userInfo) {
-            navigate('/login');
-        } else {
-            if(!user || !user.name){
-                dispatch(getUserDetails('profile/'))
-            } else {
-                setName(user.name)
-                setEmail(user.email)
-            }
-        }
-    }, [dispatch, navigate, userInfo]);
 
     return (
         <Row>
