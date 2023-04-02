@@ -18,7 +18,7 @@ import {
 import Message from "../Components/Message";
 import { addToCart, removeFromCart } from "../actions/cartActions";
 
-function CartScreen(location) {
+function CartScreen() {
     const [searchParams, setSearchParams] = useSearchParams();
     const match = useParams();
     const navigate = useNavigate();
